@@ -1,64 +1,29 @@
-# rust_roam
+# roam_rs
 
-**rust_roam** é um explorador de diretórios em Rust que mostra o tamanho de pastas e arquivos de forma rápida e organizada. Ele exibe o conteúdo em forma de árvore, com cores para diferenciar diretórios, arquivos e tamanhos, facilitando a visualização do espaço ocupado em seu sistema.
+**roam_rs** displays the size of files and directories.
 
----
+## Installation
 
-## Recursos
-
-* Exibe o tamanho de diretórios e arquivos em formato humano-legível (B, KB, MB, GB, TB).
-* Gera árvore hierárquica ordenada por tamanho.
-* Diretórios são processados em **multithread** para velocidade máxima.
-* Diferencia diretórios e arquivos com cores no terminal:
-
-  * Diretórios: **amarelo**
-  * Arquivos: **laranja/vermelho**
-  * Tamanhos: **ciano**
-  * Root folder: **verde**
-* Funciona em Windows, Linux e macOS.
-
----
-
-## Instalação
-
-1. Clone o repositório:
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/eusebioleite/rust_roam.git
-cd rust_roam
+git clone https://github.com/eusebioleite/roam_rs.git
+cd roam_rs
 ```
 
-2. Compile o projeto em modo release para máxima performance:
+2. Compile:
 
 ```bash
-cargo build --release
+cargo build
 ```
 
-3. O binário estará em `target/release/rust_roam`.
-
----
-
-## Uso
-
-### Mostrar o tamanho de um diretório
-
-```bash
-./rust_roam -d "C:\Users\Eusébio\Documents"
-```
-
-Exemplo de saída:
-
-```
-C:\Users\Eusébio\Documents -> 15.3GB
-```
-
-### Mostrar árvore de diretórios
+## Use
 
 ```bash
 ./rust_roam -t "C:\Users\Eusébio\Documents"
 ```
 
-Exemplo de saída:
+Output:
 
 ```
 C:\Users\User\Documents -> 15.3GB
@@ -67,16 +32,3 @@ C:\Users\User\Documents -> 15.3GB
 ├── Notes 2.1GB
 └── todo.txt 512.0KB
 ```
-
----
-
-## Observações
-
-* Apenas o tamanho de diretórios e arquivos **do diretório atual** é mostrado, sem descer para subdiretórios.
-* Processamento multithread permite escanear grandes diretórios quase instantaneamente.
-
----
-
-## Licença
-
-Apache License © Eusébio Leite
