@@ -172,7 +172,7 @@ fn dir_tree(path: &Path) {
     }
 }
 fn display_help() {
-    println!("{}rr directory size explorer{}", ORANGE, RESET);
+    println!("{}roam_rs{}", ORANGE, RESET);
     println!();
     println!("Usage:");
     println!("  {}rr -h            {}{}Show this help message", CYAN, RESET, YELLOW);
