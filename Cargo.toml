@@ -1,5 +1,5 @@
 [package]
-name = "rust_roam"
+name = "roam_rs"
 version = "1.0.0"
 edition = "2024"
 
