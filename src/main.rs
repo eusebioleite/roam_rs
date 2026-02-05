@@ -1,6 +1,6 @@
 use owo_colors::OwoColorize;
 use rayon::prelude::*;
-use std::io::{self, BufWriter, Write}; // Adicionado 'Write' aqui
+use std::io::{self, BufWriter, Write};
 use std::os::windows::fs::MetadataExt;
 use std::{
     env, fs,
