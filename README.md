@@ -3,7 +3,10 @@
 **roam_rs** displays the size of files and directories.
 
 ## Installation
-
+```bash
+winget install eusebioleite.rr
+```
+## Build
 1. Clone the repository:
 
 ```bash
