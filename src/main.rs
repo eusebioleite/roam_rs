@@ -1,73 +1,31 @@
+use owo_colors::OwoColorize;
 use std::{
     collections::VecDeque,
-    fs,
+    env, fs,
+    path::{Path, PathBuf},
     process::exit,
-    env,
-    path::{ Path, PathBuf },
-    sync::{ Arc, atomic::{ AtomicU64, Ordering }, Mutex },
+    sync::{
+        atomic::{AtomicU64, Ordering},
+        Arc, Mutex,
+    },
     thread,
 };
 
-const RESET: &str = "\x1b[0m";
-const GREEN: &str = "\x1b[32m";
-const YELLOW: &str = "\x1b[33m";
-const ORANGE: &str = "\x1b[38;5;208m";
-const CYAN: &str = "\x1b[36m";
-const DEFAULT: &str = "\x1b[39m";
-
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let switch: &str = args.get(1).unwrap_or_else(|| {
-        display_help();
-        exit(0);
+    let path = env::current_dir().map(PathBuf::from).unwrap_or_else(|_| {
+        eprintln!(
+            "{}:{}",
+            "[ERROR]".bold().bright_red(),
+            "Please provide a path.".italic().black().dimmed()
+        );
+        exit(1);
     });
-    match switch {
-        "-h" => {
-            display_help();
-        }
-        "-d" => {
-            let path = args
-                .get(2)
-                .map(PathBuf::from)
-                .unwrap_or_else(|| {
-                    eprintln!("ERROR: Please provide a path.");
-                    exit(1);
-                });
-            println!(
-                "{}{}{} {}{}{}",
-                GREEN,
-                path.display(),
-                RESET,
-                CYAN,
-                human_size(dir_size(&path)),
-                RESET
-            );
-        }
-        "-t" => {
-            let path = args
-                .get(2)
-                .map(PathBuf::from)
-                .unwrap_or_else(|| {
-                    eprintln!("ERROR: Please provide a path.");
-                    exit(1);
-                });
-            println!(
-                "{}{}{} {}{}{}",
-                GREEN,
-                path.display(),
-                RESET,
-                CYAN,
-                human_size(dir_size(&path)),
-                RESET
-            );
-            dir_tree(&path);
-        }
-        _ => {
-            eprintln!("Error: Unknown switch '{}'.", switch);
-            display_help();
-            exit(0);
-        }
-    }
+    println!(
+        "{} {}",
+        path.display().bold().bright_green(),
+        human_size(dir_size(&path)).bold().bright_cyan()
+    );
+    dir_tree(&path);
 }
 fn human_size(size: u64) -> String {
     const UNITS: [&str; 5] = ["B", "KB", "MB", "GB", "TB"];
@@ -80,8 +38,7 @@ fn human_size(size: u64) -> String {
     format!("{:.1}{}", size, UNITS[unit])
 }
 fn dir_size(root: &Path) -> u64 {
-    let num_threads = std::thread
-        ::available_parallelism()
+    let num_threads = std::thread::available_parallelism()
         .map(|n| n.get())
         .unwrap_or(1);
     let queue = Arc::new(Mutex::new(VecDeque::from([root.to_path_buf()])));
@@ -91,12 +48,10 @@ fn dir_size(root: &Path) -> u64 {
         let queue = Arc::clone(&queue);
         let total = Arc::clone(&total);
         let handle = thread::spawn(move || {
-            while
-                let Some(path) = ({
-                    let mut q = queue.lock().unwrap();
-                    q.pop_front()
-                })
-            {
+            while let Some(path) = ({
+                let mut q = queue.lock().unwrap();
+                q.pop_front()
+            }) {
                 if let Ok(entries) = fs::read_dir(&path) {
                     for entry in entries.flatten() {
                         if let Ok(ft) = entry.file_type() {
@@ -134,54 +89,33 @@ fn dir_tree(path: &Path) {
                 let size = dir_size(&path_entry);
                 dirs.push((name, size));
             } else if path_entry.is_file() {
-                let size = path_entry
-                    .metadata()
-                    .map(|m| m.len())
-                    .unwrap_or(0);
+                let size = path_entry.metadata().map(|m| m.len()).unwrap_or(0);
                 files.push((name, size));
             }
         }
         dirs.sort_by(|a, b| b.1.cmp(&a.1));
         files.sort_by(|a, b| b.1.cmp(&a.1));
         for (i, (name, size)) in dirs.iter().enumerate() {
-            let connector = if i == dirs.len() - 1 && files.is_empty() { "└──" } else { "├──" };
+            let connector = if i == dirs.len() - 1 && files.is_empty() {
+                "└──"
+            } else {
+                "├──"
+            };
             println!(
-                "{}{} {}{}{} {}{}",
-                DEFAULT,
+                "{} {} {}",
                 connector,
-                YELLOW,
-                name,
-                RESET,
-                CYAN,
-                human_size(*size)
+                name.bold().bright_yellow(),
+                human_size(*size).bold().bright_cyan()
             );
         }
         for (i, (name, size)) in files.iter().enumerate() {
             let connector = if i == files.len() - 1 { "└" } else { "├" };
             println!(
-                "{}{} {}{}{} {}{}",
-                DEFAULT,
+                "{} {} {}",
                 connector,
-                ORANGE,
-                name,
-                RESET,
-                CYAN,
-                human_size(*size)
+                name.bold().bright_yellow(),
+                human_size(*size).bold().bright_cyan()
             );
         }
     }
-}
-fn display_help() {
-    println!("{}roam_rs{}", ORANGE, RESET);
-    println!();
-    println!("Usage:");
-    println!("  {}rr -h            {}{}Show this help message", CYAN, RESET, YELLOW);
-    println!("  {}rr -d [PATH]     {}{}Show directory size for PATH", CYAN, RESET, YELLOW);
-    println!(
-        "  {}rr -t [PATH]     {}{}Show directory size tree for PATH and subdirectories",
-        CYAN,
-        RESET,
-        YELLOW
-    );
-    println!();
 }
