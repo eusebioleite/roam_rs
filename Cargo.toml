@@ -6,6 +6,12 @@ edition = "2024"
 [[bin]]
 name = "rr"
 path = "src/main.rs"
-
+[profile.release]
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
 [dependencies]
+mimalloc = "0.1.48"
 owo-colors = "4.2.3"
+rayon = "1.11.0"
