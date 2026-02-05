@@ -104,7 +104,7 @@ fn dir_tree(path: &Path) {
             println!(
                 "{} {} {}",
                 connector,
-                name.bold().bright_yellow(),
+                name.bold().bright_blue(),
                 human_size(*size).bold().bright_cyan()
             );
         }
@@ -113,7 +113,7 @@ fn dir_tree(path: &Path) {
             println!(
                 "{} {} {}",
                 connector,
-                name.bold().bright_yellow(),
+                name.bold().bright_purple(),
                 human_size(*size).bold().bright_cyan()
             );
         }
