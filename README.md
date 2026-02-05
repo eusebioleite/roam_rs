@@ -3,7 +3,10 @@
 **roam_rs** displays the size of files and directories.
 
 ## Installation
-
+```bash
+winget install eusebioleite.rr
+```
+## Build
 1. Clone the repository:
 
 ```bash
@@ -20,15 +23,10 @@ cargo build
 ## Use
 
 ```bash
-./rust_roam -t "C:\Users\Eusébio\Documents"
+>rr
+C:\Users\rusts\AppData 71.6GB
+├── Local 58.2GB
+├── Roaming 13.3GB
+└── LocalLow 58.9MB
 ```
-
-Output:
-
-```
-C:\Users\User\Documents -> 15.3GB
-├── ProjectA 8.2GB
-├── ProjectB 4.5GB
-├── Notes 2.1GB
-└── todo.txt 512.0KB
-```
+Basically just execute on the folder you want to know the size of.
